@@ -33,7 +33,7 @@ lista.innerHTML = modelos.map(m => `
             <strong>${P.escapar(m.nombre)}</strong>
             <em>${P.escapar(m.cientifico)}</em>
         </span>
-        ${m.archivo ? '<span class="etiqueta">GLB</span>' : ''}
+
     </button>`).join('');
 
 lista.addEventListener('click', ev => {
@@ -134,10 +134,12 @@ function pintarFicha(slug, m) {
         </dl>
         <div class="ficha3d__curiosidad"><strong>Dato curioso</strong>${P.escapar(e.curiosidad)}</div>
         <a class="boton boton--chico" href="${P.url('/mapa')}?animal=${encodeURIComponent(slug)}" data-mapa>Ver dónde está en el mapa</a>
-        ${m.archivo ? '' : '<p class="ficha3d__nota">Modelo y pelaje generados por código con Three.js.</p>'}
+        ${m.credito
+            ? `<p class="ficha3d__nota">Modelo 3D: <a href="${P.escapar(m.credito.url)}" target="_blank" rel="noopener">${P.escapar(m.credito.titulo)}</a> de ${P.escapar(m.credito.autor)} (Sketchfab), licencia ${P.escapar(m.credito.licencia)}.</p>`
+            : '<p class="ficha3d__nota">Modelo y pelaje generados por código con Three.js.</p>'}
     `;
     // enlace al primer recinto del animal
-    P.api('recintos').then(rs => {
+    P.api('leyenda').then(rs => {
         const r = rs.find(x => x.especies.includes(slug));
         const a = ficha.querySelector('[data-mapa]');
         if (r && a) a.href = P.url('/mapa') + '?recinto=' + r.numero;

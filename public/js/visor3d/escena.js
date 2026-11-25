@@ -196,6 +196,11 @@ export function cargarGLB(url, alturaDeseada = 1.4) {
             const escena = gltf.scene;
             objeto.add(escena);
 
+            // Algunos modelos traen su propia base o piso: se quita para usar la plataforma del visor
+            const sobrantes = [];
+            escena.traverse(m => { if (m.isMesh && /circle|plane|ground|floor|base|pedestal|suelo|piso/i.test(m.name)) sobrantes.push(m); });
+            sobrantes.forEach(m => m.parent.remove(m));
+
             // Normaliza tamaño y lo apoya en el piso
             const caja = new THREE.Box3().setFromObject(escena);
             const tam = caja.getSize(new THREE.Vector3());
@@ -214,9 +219,10 @@ export function cargarGLB(url, alturaDeseada = 1.4) {
             const clips = gltf.animations;
             // intenta usar "walk"/"idle" si el archivo los trae
             const buscar = re => clips.find(c => re.test(c.name)) || null;
+            // Si el archivo no trae animación de reposo, en "Reposo" se queda quieto
             const acciones = mezclador ? {
-                caminar: buscar(/walk|camin|run/i) || clips[0],
-                reposo: buscar(/idle|repos|breath/i) || clips[0]
+                caminar: buscar(/walk|camin/i) || buscar(/run|corr/i) || clips[0],
+                reposo: buscar(/idle|repos|breath|stand/i)
             } : null;
             let activa = null, modoPrevio = null;
 
@@ -227,10 +233,12 @@ export function cargarGLB(url, alturaDeseada = 1.4) {
                 actualizar(t, modo, dt) {
                     if (!mezclador) return;
                     if (modo !== modoPrevio) {
-                        const clip = acciones[modo] || clips[0];
+                        // sin clip de reposo: se usa el primer cuadro del de caminar, en pausa
+                        const clip = acciones[modo] || acciones.caminar;
                         const nueva = mezclador.clipAction(clip);
-                        if (activa && activa !== nueva) activa.fadeOut(.3);
-                        nueva.reset().fadeIn(.3).play();
+                        if (activa && activa !== nueva) activa.stop();
+                        nueva.reset().play();
+                        nueva.paused = !acciones[modo];
                         activa = nueva;
                         modoPrevio = modo;
                     }
