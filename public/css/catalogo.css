@@ -1,0 +1,145 @@
+/* Catálogo de animales y ficha (también la usa el mapa) */
+
+:root {
+    --c-felinos: #e2a55f;
+    --c-herbivoros: #9cc47a;
+    --c-aves: #e9c95b;
+    --c-primates: #8fb8d4;
+    --c-carnivoros: #c39a74;
+    --c-reptiles: #7fae8e;
+}
+
+.catalogo { padding-bottom: 4rem; }
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.buscador {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex: 1 1 280px;
+    max-width: 420px;
+    background: var(--blanco);
+    border: 1.5px solid var(--linea);
+    border-radius: 999px;
+    padding: .6rem 1rem;
+    color: var(--tinta-suave);
+}
+.buscador:focus-within { border-color: var(--bosque); }
+.buscador input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    width: 100%;
+    color: var(--tinta);
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip {
+    border: 1.5px solid var(--linea);
+    background: var(--blanco);
+    border-radius: 999px;
+    padding: .4rem .85rem;
+    cursor: pointer;
+    font-size: .9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: var(--tinta-suave);
+}
+.chip i { width: 10px; height: 10px; border-radius: 50%; }
+.chip[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: var(--blanco); }
+
+.catalogo__conteo { color: var(--tinta-suave); font-size: .92rem; }
+
+.rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.animal {
+    position: relative;
+    text-align: left;
+    background: var(--blanco);
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-lg);
+    padding: 1.2rem 1.2rem 1.1rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+    color: inherit;
+}
+.animal::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: var(--color, var(--arena-2));
+}
+.animal:hover { transform: translateY(-3px); box-shadow: var(--sombra); }
+.animal h3 { font-size: 1.25rem; margin: .3rem 0 .1rem; }
+.animal__cientifico { font-style: italic; color: var(--tinta-suave); font-size: .92rem; margin-bottom: .8rem; }
+.animal__pie { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+.animal__recintos { font-size: .82rem; color: var(--tinta-suave); margin-left: auto; }
+.marca3d {
+    font-size: .7rem; font-weight: 700; letter-spacing: .05em;
+    background: var(--tinta); color: var(--blanco);
+    padding: .2rem .5rem; border-radius: 6px;
+}
+
+/* ---------- Ficha (dialog) ---------- */
+
+.ficha-modal {
+    width: min(620px, 100% - 2rem);
+    border: 0;
+    border-radius: var(--radio-lg);
+    padding: 0;
+    background: var(--blanco);
+    box-shadow: var(--sombra-lg);
+    color: var(--tinta);
+}
+.ficha-modal::backdrop { background: rgb(28 33 29 / .5); backdrop-filter: blur(3px); }
+.ficha-modal__cuerpo { padding: 2rem; }
+.ficha-modal__cerrar {
+    position: absolute; top: .8rem; right: .8rem;
+    width: 40px; height: 40px;
+    border-radius: 50%; border: 0;
+    background: var(--arena); font-size: 1.5rem; line-height: 1;
+    cursor: pointer;
+}
+
+.ficha h2 { font-size: 2rem; margin-bottom: .1rem; }
+.ficha__cientifico { font-style: italic; color: var(--tinta-suave); }
+.ficha__etiquetas { display: flex; flex-wrap: wrap; gap: .4rem; margin: .8rem 0 1.2rem; }
+.ficha__datos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem 1.2rem;
+    margin: 1.2rem 0;
+    padding: 1rem 0;
+    border-block: 1px solid var(--linea);
+}
+.ficha__datos dt { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta-suave); }
+.ficha__datos dd { margin: .1rem 0 0; font-weight: 500; }
+.ficha__curiosidad {
+    background: #f3ead8;
+    border-radius: var(--radio);
+    padding: .9rem 1rem;
+    border-left: 4px solid var(--naranja);
+}
+.ficha__curiosidad strong { display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--tierra); }
+.ficha__acciones { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.2rem; }
+
+@media (max-width: 520px) {
+    .ficha__datos { grid-template-columns: 1fr; }
+    .ficha-modal__cuerpo { padding: 1.5rem; }
+}
