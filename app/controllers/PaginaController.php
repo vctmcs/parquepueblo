@@ -8,7 +8,7 @@ final class PaginaController
         $repo = new Repositorio();
         View::render('inicio', $this->comunes('inicio', 'Inicio') + [
             'total_especies' => count($repo->especies()),
-            'total_recintos' => count($repo->recintos()),
+            'total_recintos' => count($repo->leyenda()),
             'total_3d'       => count($repo->modelos3d()),
         ]);
     }

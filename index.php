@@ -36,6 +36,7 @@ $router->get('/animales-3d', [PaginaController::class, 'modelos3d']);
 // API JSON (la consume el JavaScript del sitio)
 $router->get('/api/especies', [ApiController::class, 'especies']);
 $router->get('/api/recintos', [ApiController::class, 'recintos']);
+$router->get('/api/leyenda',  [ApiController::class, 'leyenda']);
 $router->get('/api/servicios', [ApiController::class, 'servicios']);
 $router->get('/api/modelos',  [ApiController::class, 'modelos']);
 

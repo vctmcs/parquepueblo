@@ -1,19 +1,19 @@
 /* ==========================================================
-   Mapa interactivo: pinta recintos y servicios sobre el SVG,
-   maneja zoom/arrastre, filtros, búsqueda y el panel de detalle.
+   Mapa interactivo: dibuja los recintos del plano sobre la base
+   SVG, maneja zoom/arrastre, filtros, búsqueda y el detalle.
    ========================================================== */
 (async function () {
     const P = window.Parque;
     const NS = 'http://www.w3.org/2000/svg';
-    const ANCHO = 600, ALTO = 1360;
+    const ANCHO = 610, ALTO = 1370;
 
     const svg = document.getElementById('mapa');
     const lienzo = document.getElementById('lienzo');
     const capaRecintos = document.getElementById('capa-recintos');
     const capaServicios = document.getElementById('capa-servicios');
-    const capaArboles = document.getElementById('capa-arboles');
     const listaRecintos = document.getElementById('lista-recintos');
     const listaServicios = document.getElementById('lista-servicios');
+    const listaSinUbicar = document.getElementById('lista-sin-ubicar');
     const chips = document.getElementById('chips-mapa');
     const buscar = document.getElementById('buscar-mapa');
     const detalle = document.getElementById('detalle');
@@ -21,17 +21,17 @@
 
     const COLORES = {
         felinos: ['#e2a55f', '#a8692a'],
-        herbivoros: ['#b5d38f', '#6c9649'],
+        herbivoros: ['#c9dc9f', '#6c9649'],
         aves: ['#ecd36e', '#a88d1f'],
         primates: ['#a7c9e0', '#4f86ab'],
         carnivoros: ['#d3b08c', '#8a6239'],
         reptiles: ['#94c2a1', '#4c7f5a']
     };
 
-    let especies, recintos, servicios;
+    let especies, recintos, leyenda, servicios;
     try {
-        [especies, recintos, servicios] = await Promise.all([
-            P.api('especies'), P.api('recintos'), P.api('servicios')
+        [especies, recintos, leyenda, servicios] = await Promise.all([
+            P.api('especies'), P.api('recintos'), P.api('leyenda'), P.api('servicios')
         ]);
     } catch (e) {
         listaRecintos.innerHTML = '<li>No se pudo cargar el mapa. Recarga la página.</li>';
@@ -44,134 +44,137 @@
         if (padre) padre.appendChild(n);
         return n;
     };
-    const categoriaDe = r => especies[r.especies[0]]?.categoria || 'herbivoros';
-    const tiene3d = r => r.especies.some(s => especies[s]?.modelo3d);
     const normal = t => (t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const catDe = esp => especies[esp[0]]?.categoria || 'herbivoros';
+    const nombresDe = esp => esp.map(s => especies[s]?.nombre).join(' y ');
+    const tiene3d = esp => esp.some(s => especies[s]?.modelo3d);
 
-    /* ---------- Árboles decorativos ---------- */
-    const arboles = [
-        [372, 40, 9], [380, 150, 8], [386, 300, 7], [140, 500, 8], [144, 860, 9],
-        [160, 925, 12], [332, 925, 11], [120, 1150, 10], [360, 1130, 12], [110, 1310, 11],
-        [215, 1305, 10], [300, 1300, 9], [480, 1225, 12], [560, 1215, 10], [500, 1295, 9],
-        [180, 960, 7], [300, 960, 7], [175, 1125, 8], [305, 1120, 8], [42, 1300, 9],
-        [585, 1010, 7], [420, 1090, 7], [520, 1105, 7], [370, 1030, 8]
-    ];
-    for (const [x, y, r] of arboles) {
-        const g = el('g', { transform: `translate(${x} ${y})` }, capaArboles);
-        el('circle', { r: r + 1.5, fill: '#3f6e2e', opacity: .35, cy: 2 }, g);
-        el('circle', { r, fill: '#4f8a39' }, g);
-        el('circle', { r: r * .55, cx: -r * .25, cy: -r * .25, fill: '#6aa74c' }, g);
-    }
+    /* ==========================================================
+       Elementos seleccionables. Cada clave agrupa una o varias
+       figuras del mapa y una fila de la lista:
+         n-12      número de la leyenda (puede tener varias figuras)
+         s-kiosko  servicio
+    ========================================================== */
+    const nodos = new Map();
 
-    /* ---------- Recintos ---------- */
-    const nodos = new Map(); // clave "r-18" / "s-banos-1" -> {g, boton}
-
+    /* ---------- Figuras de los recintos ---------- */
     for (const r of recintos) {
-        const cat = categoriaDe(r);
-        const [relleno, borde] = COLORES[cat] || COLORES.herbivoros;
-        const nombres = r.especies.map(s => especies[s]?.nombre).join(' y ');
-
+        const [relleno, borde] = COLORES[catDe(r.especies)] || COLORES.herbivoros;
         const g = el('g', {
             class: 'recinto',
             tabindex: 0,
             role: 'button',
-            'aria-label': `Recinto ${r.numero}: ${nombres}`,
-            'data-clave': 'r-' + r.numero
+            'aria-label': `Recinto ${r.numero}: ${nombresDe(r.especies)}`,
+            'data-clave': 'n-' + r.numero
         }, capaRecintos);
 
-        const comun = { class: 'recinto__forma', fill: relleno, stroke: borde };
+        const estilo = { class: 'recinto__forma', fill: relleno, stroke: borde };
         const textura = { class: 'recinto__textura', fill: 'url(#p-textura)' };
+        let forma;
         if (r.forma === 'elipse') {
             const e = { cx: r.x + r.w / 2, cy: r.y + r.h / 2, rx: r.w / 2, ry: r.h / 2 };
-            el('ellipse', { ...e, ...comun }, g);
+            forma = el('ellipse', { ...e, ...estilo }, g);
             el('ellipse', { ...e, ...textura }, g);
+        } else if (r.forma === 'path') {
+            forma = el('path', { d: r.d, ...estilo }, g);
+            el('path', { d: r.d, ...textura }, g);
         } else {
-            const e = { x: r.x, y: r.y, width: r.w, height: r.h, rx: 14 };
-            el('rect', { ...e, ...comun }, g);
+            const e = { x: r.x, y: r.y, width: r.w, height: r.h, rx: r.r ?? 14 };
+            forma = el('rect', { ...e, ...estilo }, g);
             el('rect', { ...e, ...textura }, g);
         }
 
-        const elipse = r.forma === 'elipse';
-        const nx = elipse ? r.x + r.w / 2 : r.x + 17;
-        const ny = elipse ? r.y + r.h / 2 - 12 : r.y + 17;
-        el('circle', { class: 'recinto__num-fondo', cx: nx, cy: ny, r: 12 }, g);
-        el('text', { class: 'recinto__num', x: nx, y: ny }, g).textContent = r.numero;
-
-        const etiqueta = el('text', {
-            class: 'recinto__nombre',
-            x: r.x + r.w / 2,
-            y: elipse ? r.y + r.h / 2 + 14 : r.y + r.h - 11
-        }, g);
-        etiqueta.textContent = r.etiqueta;
-
-        if (tiene3d(r)) {
-            const t = el('g', { class: 'recinto__icono3d', transform: `translate(${r.x + r.w - (elipse ? r.w / 2 + 14 : 30)} ${elipse ? r.y + 14 : r.y + 8})` }, g);
-            el('rect', { width: 26, height: 15, rx: 4, fill: '#1c211d' }, t);
-            el('text', { x: 13, y: 11, 'text-anchor': 'middle', 'font-size': 9.5, 'font-weight': 700, fill: '#fff', 'font-family': 'Outfit, sans-serif' }, t).textContent = '3D';
+        // Etiqueta arriba del número (el plano pone el número abajo a la derecha)
+        // En recintos chicos solo va el número, como en el plano
+        const caja = forma.getBBox();
+        if (caja.height >= 60) {
+            const ly = Math.max(caja.y + 15, r.ny - 19);
+            const etiqueta = el('text', { class: 'recinto__nombre', x: caja.x + caja.width / 2, y: ly }, g);
+            etiqueta.textContent = r.corta || r.etiqueta.split(' y ')[0];
         }
 
-        // Elemento de la lista lateral
+        el('circle', { class: 'recinto__num-fondo', cx: r.nx, cy: r.ny, r: 12 }, g);
+        el('text', { class: 'recinto__num', x: r.nx, y: r.ny }, g).textContent = r.numero;
+
+        if (tiene3d(r.especies)) {
+            const t = el('g', { class: 'recinto__icono3d', transform: `translate(${caja.x + 6} ${caja.y + 6})` }, g);
+            el('rect', { width: 24, height: 14, rx: 4, fill: '#1c211d' }, t);
+            el('text', { x: 12, y: 10.5, 'text-anchor': 'middle', 'font-size': 9, 'font-weight': 700, fill: '#fff', 'font-family': 'Outfit, sans-serif' }, t).textContent = '3D';
+        }
+
+        const clave = 'n-' + r.numero;
+        if (!nodos.has(clave)) nodos.set(clave, { figuras: [], cajas: [] });
+        nodos.get(clave).figuras.push(g);
+        nodos.get(clave).cajas.push(caja);
+    }
+
+    /* ---------- Lista numerada (leyenda) ---------- */
+    for (const L of leyenda) {
+        const clave = 'n-' + L.numero;
+        const [relleno] = COLORES[catDe(L.especies)] || COLORES.herbivoros;
+        const veces = nodos.get(clave)?.figuras.length || 0;
         const li = document.createElement('li');
-        li.dataset.clave = 'r-' + r.numero;
+        li.dataset.clave = clave;
         li.innerHTML = `
             <button type="button">
-                <span class="lista__num" style="background:${relleno}">${r.numero}</span>
-                <span class="lista__texto">${P.escapar(nombres)}<small>${P.escapar(r.especies.map(s => especies[s]?.cientifico).join(' · '))}</small></span>
-                ${tiene3d(r) ? '<span class="marca3d lista__3d">3D</span>' : ''}
+                <span class="lista__num" style="background:${relleno}">${L.numero}</span>
+                <span class="lista__texto">${P.escapar(L.etiqueta)}<small>${P.escapar(L.especies.map(s => especies[s]?.cientifico).join(' · '))}${veces > 1 ? ` · ${veces} lugares en el plano` : ''}</small></span>
+                ${tiene3d(L.especies) ? '<span class="marca3d lista__3d">3D</span>' : ''}
             </button>`;
-        listaRecintos.appendChild(li);
+        (L.ubicado ? listaRecintos : listaSinUbicar).appendChild(li);
 
-        nodos.set('r-' + r.numero, {
-            g, li, tipo: 'recinto', datos: r, categorias: r.especies.map(s => especies[s]?.categoria),
-            texto: normal(`${r.numero} ${r.etiqueta} ${nombres} ${r.especies.map(s => especies[s]?.cientifico + ' ' + especies[s]?.alias).join(' ')}`),
-            centro: [r.x + r.w / 2, r.y + r.h / 2], radio: Math.max(r.w, r.h) / 2 + 6
+        const n = nodos.get(clave) || { figuras: [], cajas: [] };
+        Object.assign(n, {
+            li, tipo: 'recinto', datos: L, categorias: L.especies.map(s => especies[s]?.categoria),
+            texto: normal(`${L.numero} ${L.etiqueta} ${L.especies.map(s => `${especies[s]?.nombre} ${especies[s]?.cientifico} ${especies[s]?.alias}`).join(' ')}`)
         });
+        nodos.set(clave, n);
     }
 
     /* ---------- Servicios ---------- */
     for (const s of servicios) {
-        const g = el('g', {
-            class: 'servicio',
-            tabindex: 0,
-            role: 'button',
-            'aria-label': s.nombre,
-            'data-clave': 's-' + s.id,
-            transform: `translate(${s.x} ${s.y})`
-        }, capaServicios);
-        el('circle', { class: 'servicio__fondo', r: 15 }, g);
-        el('use', { href: '#ico-' + s.icono, x: -9, y: -9, width: 18, height: 18 }, g);
+        const clave = 's-' + s.id;
+        const ubicado = s.x !== null && s.y !== null;
+        const n = { figuras: [], cajas: [], tipo: 'servicio', datos: s, categorias: ['servicios'], texto: normal(s.nombre + ' ' + s.descripcion) };
+
+        if (ubicado) {
+            const g = el('g', {
+                class: 'servicio', tabindex: 0, role: 'button', 'aria-label': s.nombre,
+                'data-clave': clave, transform: `translate(${s.x} ${s.y})`
+            }, capaServicios);
+            el('circle', { class: 'servicio__fondo', r: 15 }, g);
+            el('use', { href: '#ico-' + s.icono, x: -9, y: -9, width: 18, height: 18 }, g);
+            n.figuras.push(g);
+            n.cajas.push({ x: s.x - 18, y: s.y - 18, width: 36, height: 36 });
+        }
 
         const li = document.createElement('li');
-        li.dataset.clave = 's-' + s.id;
+        li.dataset.clave = clave;
         li.innerHTML = `
             <button type="button">
                 <span class="lista__icono"><svg viewBox="0 0 24 24"><use href="#ico-${s.icono}"/></svg></span>
                 <span class="lista__texto">${P.escapar(s.nombre)}</span>
             </button>`;
-        listaServicios.appendChild(li);
-
-        nodos.set('s-' + s.id, {
-            g, li, tipo: 'servicio', datos: s, categorias: ['servicios'],
-            texto: normal(s.nombre + ' ' + s.descripcion), centro: [s.x, s.y], radio: 20
-        });
+        (ubicado ? listaServicios : listaSinUbicar).appendChild(li);
+        n.li = li;
+        nodos.set(clave, n);
     }
 
-    /* ---------- Vista: zoom y arrastre ---------- */
+    /* ---------- Vista: zoom y arrastre (viewBox) ---------- */
     const vista = { cx: ANCHO / 2, cy: ALTO / 2, s: 1 };
     let animacion = null;
 
-    function medidas() {
+    const medidas = () => {
         const r = lienzo.getBoundingClientRect();
         return { W: r.width || 1, H: r.height || 1 };
-    }
-    function escalaAjuste() {
+    };
+    const escalaAjuste = () => {
         const { W, H } = medidas();
         return Math.min(W / ANCHO, H / ALTO) * 0.96;
-    }
+    };
     function limitar() {
         const { W, H } = medidas();
-        const min = escalaAjuste() * 0.9;
-        vista.s = Math.min(Math.max(vista.s, min), 5);
+        vista.s = Math.min(Math.max(vista.s, escalaAjuste() * 0.9), 5);
         const mw = W / vista.s / 2, mh = H / vista.s / 2;
         vista.cx = mw * 2 >= ANCHO ? ANCHO / 2 : Math.min(Math.max(vista.cx, mw - 20), ANCHO - mw + 20);
         vista.cy = mh * 2 >= ALTO ? ALTO / 2 : Math.min(Math.max(vista.cy, mh - 20), ALTO - mh + 20);
@@ -184,24 +187,17 @@
     }
     function vistaInicial() {
         const { W, H } = medidas();
-        const ajuste = escalaAjuste();
+        vista.cx = ANCHO / 2;
         if (W > H) {
-            // Pantallas anchas: mostrar la mitad norte con buen tamaño de texto
-            vista.s = Math.max(ajuste, Math.min(W / ANCHO, H / 860) * 0.96);
-            vista.cx = ANCHO / 2;
+            vista.s = Math.max(escalaAjuste(), Math.min(W / ANCHO, H / 880) * 0.96);
             vista.cy = 0;
         } else {
-            vista.s = ajuste;
-            vista.cx = ANCHO / 2;
+            vista.s = escalaAjuste();
             vista.cy = ALTO / 2;
         }
         aplicar();
     }
-    function verTodo() {
-        animarA(ANCHO / 2, ALTO / 2, escalaAjuste());
-    }
     function zoomEn(factor, px, py) {
-        // px, py: punto en pantalla (relativo al lienzo) que se queda fijo
         const { W, H } = medidas();
         px ??= W / 2; py ??= H / 2;
         const ux = vista.cx + (px - W / 2) / vista.s;
@@ -228,7 +224,6 @@
         animacion = requestAnimationFrame(paso);
     }
 
-    // Punteros (mouse, touch y lápiz) con soporte de pellizco
     const punteros = new Map();
     let inicio = null, movido = false, objetivo = null, distanciaPellizco = 0;
 
@@ -244,11 +239,9 @@
             movido = true;
         }
     });
-
     lienzo.addEventListener('pointermove', ev => {
         if (!punteros.has(ev.pointerId)) return;
         punteros.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
-
         if (punteros.size === 2) {
             const [a, b] = [...punteros.values()];
             const d = Math.hypot(a.x - b.x, a.y - b.y);
@@ -257,7 +250,6 @@
             distanciaPellizco = d;
             return;
         }
-
         if (!inicio) return;
         const dx = ev.clientX - inicio.x, dy = ev.clientY - inicio.y;
         if (!movido && Math.hypot(dx, dy) > 5) {
@@ -272,7 +264,6 @@
             aplicar();
         }
     });
-
     const soltar = ev => {
         punteros.delete(ev.pointerId);
         if (punteros.size === 0) {
@@ -288,7 +279,6 @@
     };
     lienzo.addEventListener('pointerup', soltar);
     lienzo.addEventListener('pointercancel', soltar);
-
     lienzo.addEventListener('wheel', ev => {
         ev.preventDefault();
         const caja = lienzo.getBoundingClientRect();
@@ -300,10 +290,8 @@
         if (!b) return;
         if (b.dataset.zoom === 'in') zoomEn(1.3);
         if (b.dataset.zoom === 'out') zoomEn(1 / 1.3);
-        if (b.dataset.zoom === 'reset') verTodo();
+        if (b.dataset.zoom === 'reset') animarA(ANCHO / 2, ALTO / 2, escalaAjuste());
     });
-
-    // Teclado sobre recintos y servicios
     svg.addEventListener('keydown', ev => {
         const g = ev.target.closest('.recinto, .servicio');
         if (g && (ev.key === 'Enter' || ev.key === ' ')) {
@@ -311,47 +299,50 @@
             seleccionar(g.dataset.clave);
         }
     });
-
     window.addEventListener('resize', aplicar);
 
-    /* ---------- Selección y detalle ---------- */
+    /* ---------- Selección ---------- */
     let actual = null;
-    let pulso = null;
+    let pulsos = [];
+    const esEscritorio = () => window.matchMedia('(min-width: 981px)').matches;
 
-    function seleccionar(clave, { mover = true } = {}) {
+    function marcar(clave, activo) {
         const n = nodos.get(clave);
         if (!n) return;
+        n.figuras.forEach(f => f.classList.toggle('seleccionado', activo));
+        n.li?.querySelector('button').classList.toggle('seleccionado', activo);
+    }
 
-        if (actual) {
-            const prev = nodos.get(actual);
-            prev.g.classList.remove('seleccionado');
-            prev.li.querySelector('button').classList.remove('seleccionado');
-        }
+    function seleccionar(clave) {
+        const n = nodos.get(clave);
+        if (!n) return;
+        if (actual) marcar(actual, false);
         actual = clave;
-        n.g.classList.add('seleccionado');
-        const boton = n.li.querySelector('button');
-        boton.classList.add('seleccionado');
-        // Solo en escritorio la lista tiene su propio scroll; en móvil moveríamos la página
-        if (window.matchMedia('(min-width: 981px)').matches) boton.scrollIntoView({ block: 'nearest' });
+        marcar(clave, true);
 
-        // Anillo animado
-        pulso?.remove();
-        pulso = el('circle', { class: 'pulso', cx: n.centro[0], cy: n.centro[1], r: n.radio }, capaServicios);
+        const boton = n.li?.querySelector('button');
+        if (boton && esEscritorio()) boton.scrollIntoView({ block: 'nearest' });
 
-        // Mueve el contenido al frente para que no lo tapen los vecinos
-        n.g.parentNode.appendChild(n.g);
+        pulsos.forEach(p => p.remove());
+        pulsos = n.cajas.map(c => el('circle', {
+            class: 'pulso', cx: c.x + c.width / 2, cy: c.y + c.height / 2, r: Math.max(c.width, c.height) / 2 + 6
+        }, capaServicios));
+        n.figuras.forEach(f => f.parentNode.appendChild(f));
 
-        if (mover) {
-            const objetivoS = Math.max(vista.s, Math.min(escalaAjuste() * 2.4, 2.2));
-            // En móvil la hoja de detalle tapa la parte baja: subimos el recinto.
-            // En escritorio el detalle tapa el panel derecho, no el mapa.
-            const movil = !window.matchMedia('(min-width: 981px)').matches;
-            const { H } = medidas();
+        // Encuadra todas las figuras del número (p. ej. los tres recintos 25)
+        if (n.cajas.length) {
+            const x0 = Math.min(...n.cajas.map(c => c.x)), y0 = Math.min(...n.cajas.map(c => c.y));
+            const x1 = Math.max(...n.cajas.map(c => c.x + c.width)), y1 = Math.max(...n.cajas.map(c => c.y + c.height));
+            const { W, H } = medidas();
+            const movil = !esEscritorio();
+            const altoUtil = movil ? H * 0.42 : H;
+            let s = Math.min(W / (x1 - x0 + 160), altoUtil / (y1 - y0 + 160));
+            s = Math.min(Math.max(s, escalaAjuste()), 2.4);
             if (movil) lienzo.parentElement.scrollIntoView({ block: 'start', behavior: 'smooth' });
-            animarA(n.centro[0], n.centro[1] + (movil ? H * 0.3 / objetivoS : 0), objetivoS);
+            animarA((x0 + x1) / 2, (y0 + y1) / 2 + (movil ? H * 0.28 / s : 0), s);
         }
 
-        detalleCuerpo.innerHTML = n.tipo === 'recinto' ? htmlRecinto(n.datos) : htmlServicio(n.datos);
+        detalleCuerpo.innerHTML = n.tipo === 'recinto' ? htmlRecinto(n) : htmlServicio(n);
         detalle.hidden = false;
         detalle.scrollTop = 0;
 
@@ -364,39 +355,43 @@
 
     function cerrarDetalle() {
         detalle.hidden = true;
-        if (actual) {
-            const n = nodos.get(actual);
-            n.g.classList.remove('seleccionado');
-            n.li.querySelector('button').classList.remove('seleccionado');
-        }
+        if (actual) marcar(actual, false);
         actual = null;
-        pulso?.remove();
+        pulsos.forEach(p => p.remove());
+        pulsos = [];
         const url = new URL(location.href);
         url.searchParams.delete('recinto');
         url.searchParams.delete('servicio');
         history.replaceState(null, '', url);
     }
 
-    function htmlRecinto(r) {
-        const fichas = r.especies.map(slug => {
-            const recs = recintos.filter(x => x.especies.includes(slug));
+    function htmlRecinto(n) {
+        const L = n.datos;
+        const aviso = !n.figuras.length
+            ? '<p class="detalle__aviso">Este número aparece en la lista del plano, pero el plano no marca su ubicación.</p>'
+            : n.figuras.length > 1
+                ? `<p class="detalle__aviso">El plano marca el número ${L.numero} en ${n.figuras.length} lugares; quedan resaltados en el mapa.</p>`
+                : '';
+        const fichas = L.especies.map(slug => {
+            const recs = leyenda.filter(x => x.especies.includes(slug));
             return Ficha.html(slug, especies[slug], recs, { ocultarMapa: true });
         }).join('');
-        return `<div class="detalle__recinto">Recinto ${r.numero}</div>${fichas}`;
+        return `<div class="detalle__recinto">Recinto ${L.numero}</div>${aviso}${fichas}`;
     }
 
-    function htmlServicio(s) {
+    function htmlServicio(n) {
+        const s = n.datos;
         return `
             <div class="detalle__servicio-icono"><svg viewBox="0 0 24 24"><use href="#ico-${s.icono}"/></svg></div>
             <div class="detalle__recinto">Servicio</div>
+            ${n.figuras.length ? '' : '<p class="detalle__aviso">Aparece en la leyenda del plano, pero el plano no marca su ubicación.</p>'}
             <h2>${P.escapar(s.nombre)}</h2>
             <p>${P.escapar(s.descripcion)}</p>`;
     }
 
     document.getElementById('cerrar-detalle').addEventListener('click', cerrarDetalle);
     document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && !detalle.hidden) cerrarDetalle(); });
-
-    [listaRecintos, listaServicios].forEach(lista => lista.addEventListener('click', ev => {
+    [listaRecintos, listaServicios, listaSinUbicar].forEach(lista => lista.addEventListener('click', ev => {
         const li = ev.target.closest('li[data-clave]');
         if (li) seleccionar(li.dataset.clave);
     }));
@@ -411,7 +406,6 @@
     chips.innerHTML = cats.map(([id, nombre, color]) =>
         `<button class="chip" type="button" data-cat="${id}" aria-pressed="${id === 'todos'}"><i style="background:${color};border:1px solid #0002"></i>${nombre}</button>`
     ).join('');
-
     chips.addEventListener('click', ev => {
         const b = ev.target.closest('.chip');
         if (!b) return;
@@ -424,17 +418,15 @@
     function filtrar() {
         const q = normal(buscar.value.trim());
         for (const n of nodos.values()) {
-            const okCat = filtro === 'todos' || n.categorias.includes(filtro);
-            const okTxt = !q || n.texto.includes(q);
-            const visible = okCat && okTxt;
-            n.g.classList.toggle('atenuado', !visible);
-            n.li.classList.toggle('oculto', !visible);
+            const visible = (filtro === 'todos' || n.categorias.includes(filtro)) && (!q || n.texto.includes(q));
+            n.figuras.forEach(f => f.classList.toggle('atenuado', !visible));
+            n.li?.classList.toggle('oculto', !visible);
         }
     }
 
     /* ---------- Arranque ---------- */
     vistaInicial();
     const params = new URLSearchParams(location.search);
-    if (params.has('recinto')) seleccionar('r-' + params.get('recinto'));
+    if (params.has('recinto')) seleccionar('n-' + params.get('recinto'));
     else if (params.has('servicio')) seleccionar('s-' + params.get('servicio'));
 })();

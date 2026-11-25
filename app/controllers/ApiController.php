@@ -20,6 +20,11 @@ final class ApiController
         View::json($this->repo->recintos());
     }
 
+    public function leyenda(): void
+    {
+        View::json($this->repo->leyenda());
+    }
+
     public function servicios(): void
     {
         View::json($this->repo->servicios());

@@ -1,41 +1,45 @@
 <?php
 /**
- * Recintos del mapa. El número es el de la lista del plano oficial.
- * Coordenadas en el lienzo SVG del mapa (600 x 1360), acomodadas según
- * la distribución del plano: felinos y herbívoros grandes al oriente,
- * río y lago con la isla al centro, explanada del kiosko al sur.
+ * Recintos tal como aparecen en el plano "Mapa de Áreas" del parque.
  *
- * forma: rect | elipse
+ * Coordenadas en el lienzo del mapa (610 x 1370), que corresponde 1:1 con
+ * la zona del mapa en la imagen del plano. Se respeta el plano aunque repita
+ * números (por ejemplo hay tres recintos con el 12 y tres con el 25).
+ *
+ * forma: rect (x, y, w, h, r) | elipse (x, y, w, h) | path (d)
+ * nx, ny: posición del número, igual que en el plano
+ *
+ * Los números de la lista que el plano no ubica (1, 4, 5, 8, 10, 14, 15, 16,
+ * 21, 22, 23, 24, 26, 27 y 30) se muestran en el panel como
+ * "sin ubicación en el plano" a partir de app/data/leyenda.php.
  */
 return [
-    ['numero' => 1,  'etiqueta' => 'Gamo',          'especies' => ['gamo'],                 'forma' => 'rect',   'x' => 506, 'y' => 24,  'w' => 84,  'h' => 80],
-    ['numero' => 2,  'etiqueta' => 'Jaguar',        'especies' => ['jaguar'],               'forma' => 'rect',   'x' => 132, 'y' => 24,  'w' => 140, 'h' => 80],
-    ['numero' => 3,  'etiqueta' => 'Cocodrilario',  'especies' => ['cocodrilo', 'pavo-real'], 'forma' => 'elipse', 'x' => 12,  'y' => 24,  'w' => 92,  'h' => 92],
-    ['numero' => 4,  'etiqueta' => 'Puma',          'especies' => ['puma'],                 'forma' => 'rect',   'x' => 412, 'y' => 288, 'w' => 84,  'h' => 85],
-    ['numero' => 5,  'etiqueta' => 'Gamo',          'especies' => ['gamo'],                 'forma' => 'rect',   'x' => 412, 'y' => 116, 'w' => 84,  'h' => 75],
-    ['numero' => 6,  'etiqueta' => 'Lince rojo',    'especies' => ['lince-rojo'],           'forma' => 'rect',   'x' => 506, 'y' => 116, 'w' => 84,  'h' => 160],
-    ['numero' => 7,  'etiqueta' => 'Guacamaya',     'especies' => ['guacamaya'],            'forma' => 'elipse', 'x' => 412, 'y' => 24,  'w' => 84,  'h' => 80],
-    ['numero' => 8,  'etiqueta' => 'Zorro gris',    'especies' => ['zorro-gris'],           'forma' => 'rect',   'x' => 412, 'y' => 203, 'w' => 84,  'h' => 73],
-    ['numero' => 9,  'etiqueta' => 'Coyote',        'especies' => ['coyote'],               'forma' => 'rect',   'x' => 506, 'y' => 288, 'w' => 84,  'h' => 85],
-    ['numero' => 10, 'etiqueta' => 'Hipopótamo',    'especies' => ['hipopotamo'],           'forma' => 'rect',   'x' => 412, 'y' => 824, 'w' => 84,  'h' => 80],
-    ['numero' => 11, 'etiqueta' => 'Jirafa',        'especies' => ['jirafa'],               'forma' => 'elipse', 'x' => 496, 'y' => 385, 'w' => 94,  'h' => 190],
-    ['numero' => 12, 'etiqueta' => 'Avestruz',      'especies' => ['avestruz'],             'forma' => 'elipse', 'x' => 412, 'y' => 395, 'w' => 80,  'h' => 170],
-    ['numero' => 13, 'etiqueta' => 'Black buck',    'especies' => ['blackbuck'],            'forma' => 'rect',   'x' => 132, 'y' => 116, 'w' => 140, 'h' => 75],
-    ['numero' => 14, 'etiqueta' => 'Ñu azul',       'especies' => ['nu'],                   'forma' => 'rect',   'x' => 132, 'y' => 203, 'w' => 140, 'h' => 75],
-    ['numero' => 15, 'etiqueta' => 'Aves mexicanas', 'especies' => ['aves-mexicanas'],      'forma' => 'rect',   'x' => 12,  'y' => 655, 'w' => 92,  'h' => 80],
-    ['numero' => 16, 'etiqueta' => 'Mono araña',    'especies' => ['mono-arana'],           'forma' => 'elipse', 'x' => 196, 'y' => 560, 'w' => 64,  'h' => 70],
-    ['numero' => 17, 'etiqueta' => 'Tigre',         'especies' => ['tigre'],                'forma' => 'rect',   'x' => 12,  'y' => 128, 'w' => 92,  'h' => 92],
-    ['numero' => 18, 'etiqueta' => 'León',          'especies' => ['leon'],                 'forma' => 'rect',   'x' => 12,  'y' => 430, 'w' => 92,  'h' => 110],
-    ['numero' => 19, 'etiqueta' => 'Papión',        'especies' => ['papion'],               'forma' => 'rect',   'x' => 12,  'y' => 232, 'w' => 92,  'h' => 92],
-    ['numero' => 20, 'etiqueta' => 'Leopardo',      'especies' => ['leopardo'],             'forma' => 'rect',   'x' => 132, 'y' => 290, 'w' => 140, 'h' => 75],
-    ['numero' => 21, 'etiqueta' => 'Lémur',         'especies' => ['lemur'],                'forma' => 'rect',   'x' => 12,  'y' => 555, 'w' => 92,  'h' => 85],
-    ['numero' => 22, 'etiqueta' => 'Papión',        'especies' => ['papion'],               'forma' => 'rect',   'x' => 12,  'y' => 336, 'w' => 92,  'h' => 80],
-    ['numero' => 23, 'etiqueta' => 'Mapache',       'especies' => ['mapache'],              'forma' => 'rect',   'x' => 506, 'y' => 590, 'w' => 84,  'h' => 70],
-    ['numero' => 24, 'etiqueta' => 'León',          'especies' => ['leon'],                 'forma' => 'rect',   'x' => 412, 'y' => 590, 'w' => 84,  'h' => 100],
-    ['numero' => 25, 'etiqueta' => 'Tigre',         'especies' => ['tigre'],                'forma' => 'rect',   'x' => 412, 'y' => 702, 'w' => 84,  'h' => 110],
-    ['numero' => 26, 'etiqueta' => 'Oso',           'especies' => ['oso'],                  'forma' => 'rect',   'x' => 506, 'y' => 672, 'w' => 84,  'h' => 100],
-    ['numero' => 27, 'etiqueta' => 'Carabao',       'especies' => ['carabao'],              'forma' => 'rect',   'x' => 412, 'y' => 916, 'w' => 84,  'h' => 80],
-    ['numero' => 28, 'etiqueta' => 'Bisonte',       'especies' => ['bisonte'],              'forma' => 'rect',   'x' => 506, 'y' => 866, 'w' => 84,  'h' => 110],
-    ['numero' => 29, 'etiqueta' => 'Ciervo sika',   'especies' => ['ciervo-sika'],          'forma' => 'rect',   'x' => 132, 'y' => 377, 'w' => 140, 'h' => 70],
-    ['numero' => 30, 'etiqueta' => 'Guanaco',       'especies' => ['guanaco'],              'forma' => 'rect',   'x' => 506, 'y' => 784, 'w' => 84,  'h' => 70],
+    // ---------- Columna poniente (arriba) ----------
+    ['id' => '3',   'numero' => 3,  'corta' => 'Cocodrilario', 'forma' => 'rect',   'x' => 3,   'y' => 50,  'w' => 97,  'h' => 85,  'r' => 30, 'nx' => 53,  'ny' => 117],
+    ['id' => '17',  'numero' => 17, 'forma' => 'rect',   'x' => 3,   'y' => 148, 'w' => 102, 'h' => 88,  'r' => 26, 'nx' => 63,  'ny' => 215],
+    ['id' => '12a', 'numero' => 12, 'forma' => 'rect',   'x' => 3,   'y' => 240, 'w' => 107, 'h' => 55,  'r' => 22, 'nx' => 70,  'ny' => 286],
+    ['id' => '19',  'numero' => 19, 'forma' => 'rect',   'x' => 3,   'y' => 299, 'w' => 102, 'h' => 88,  'r' => 26, 'nx' => 58,  'ny' => 360],
+    ['id' => '18a', 'numero' => 18, 'forma' => 'path',   'd' => 'M40 402 C70 394 112 410 123 440 C130 472 116 506 100 524 C80 526 60 500 52 470 C45 445 28 412 40 402Z', 'nx' => 92, 'ny' => 497],
+
+    // ---------- Centro poniente (entre andadores y el río) ----------
+    ['id' => '2',   'numero' => 2,  'forma' => 'elipse', 'x' => 130, 'y' => 18,  'w' => 108, 'h' => 46,  'nx' => 207, 'ny' => 41],
+    ['id' => '13',  'numero' => 13, 'corta' => 'Black buck', 'forma' => 'elipse', 'x' => 148, 'y' => 108, 'w' => 66,  'h' => 62,  'nx' => 200, 'ny' => 155],
+    ['id' => '12b', 'numero' => 12, 'forma' => 'rect',   'x' => 140, 'y' => 183, 'w' => 95,  'h' => 60,  'r' => 24, 'nx' => 205, 'ny' => 230],
+    ['id' => '20',  'numero' => 20, 'forma' => 'elipse', 'x' => 140, 'y' => 246, 'w' => 117, 'h' => 74,  'nx' => 222, 'ny' => 300],
+    ['id' => '29',  'numero' => 29, 'forma' => 'elipse', 'x' => 150, 'y' => 322, 'w' => 105, 'h' => 44,  'nx' => 210, 'ny' => 352],
+    ['id' => '7',   'numero' => 7,  'forma' => 'elipse', 'x' => 226, 'y' => 38,  'w' => 68,  'h' => 76,  'nx' => 266, 'ny' => 106],
+
+    // ---------- Oriente ----------
+    ['id' => '6',   'numero' => 6,  'forma' => 'path',   'd' => 'M522 180 L598 180 L598 395 L548 392 Q528 372 522 340Z', 'nx' => 568, 'ny' => 293],
+    ['id' => '12c', 'numero' => 12, 'forma' => 'path',   'd' => 'M470 360 L515 366 L515 539 L440 540 C402 522 386 472 400 422 C414 382 440 360 470 360Z', 'nx' => 485, 'ny' => 510],
+    ['id' => '11',  'numero' => 11, 'forma' => 'path',   'd' => 'M515 366 L585 380 L590 535 L515 539Z', 'nx' => 550, 'ny' => 507],
+
+    ['id' => '25a', 'numero' => 25, 'forma' => 'rect',   'x' => 392, 'y' => 585, 'w' => 83,  'h' => 130, 'r' => 26, 'nx' => 455, 'ny' => 700],
+    ['id' => '25b', 'numero' => 25, 'forma' => 'rect',   'x' => 392, 'y' => 735, 'w' => 78,  'h' => 103, 'r' => 18, 'nx' => 463, 'ny' => 808],
+    ['id' => '25c', 'numero' => 25, 'forma' => 'rect',   'x' => 392, 'y' => 842, 'w' => 78,  'h' => 54,  'r' => 18, 'nx' => 455, 'ny' => 872],
+    ['id' => '9a',  'numero' => 9,  'forma' => 'rect',   'x' => 500, 'y' => 597, 'w' => 98,  'h' => 108, 'r' => 22, 'nx' => 563, 'ny' => 688],
+    ['id' => '18b', 'numero' => 18, 'forma' => 'rect',   'x' => 510, 'y' => 720, 'w' => 88,  'h' => 95,  'r' => 18, 'nx' => 571, 'ny' => 795],
+    ['id' => '9b',  'numero' => 9,  'forma' => 'rect',   'x' => 510, 'y' => 820, 'w' => 88,  'h' => 80,  'r' => 18, 'nx' => 576, 'ny' => 882],
+    ['id' => '28a', 'numero' => 28, 'forma' => 'rect',   'x' => 392, 'y' => 905, 'w' => 88,  'h' => 125, 'r' => 22, 'nx' => 470, 'ny' => 1016],
+    ['id' => '28b', 'numero' => 28, 'forma' => 'rect',   'x' => 518, 'y' => 920, 'w' => 80,  'h' => 115, 'r' => 18, 'nx' => 572, 'ny' => 1012],
 ];

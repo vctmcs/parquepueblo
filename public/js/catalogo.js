@@ -10,7 +10,7 @@
 
     let especies, recintos;
     try {
-        [especies, recintos] = await Promise.all([P.api('especies'), P.api('recintos')]);
+        [especies, recintos] = await Promise.all([P.api('especies'), P.api('leyenda')]);
     } catch (e) {
         rejilla.innerHTML = '<p>No se pudieron cargar los animales. Intenta recargar la página.</p>';
         return;
