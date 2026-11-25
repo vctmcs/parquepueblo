@@ -1,0 +1,58 @@
+<section class="pagina3d">
+    <div class="contenedor encabezado encabezado--3d">
+        <span class="etiqueta">Visor 3D</span>
+        <h1>Animales en 3D</h1>
+        <p>Gira, acerca y compara a los grandes animales del parque. Cambia entre el pelaje con textura y el modelo sin color para ver cómo se construye.</p>
+    </div>
+
+    <div class="contenedor pagina3d__grid">
+        <nav class="lista3d" id="lista-3d" aria-label="Elegir animal">
+            <span class="cargando" aria-label="Cargando"></span>
+        </nav>
+
+        <div class="visor">
+            <div class="visor__escenario" id="escenario"></div>
+
+            <div class="visor__carga" id="carga-3d" hidden>
+                <span class="cargando"></span>
+                <span>Generando pelaje…</span>
+            </div>
+
+            <div class="visor__barra visor__barra--arriba">
+                <div class="segmento" data-control="acabado" role="group" aria-label="Acabado del modelo">
+                    <button type="button" data-valor="textura" aria-pressed="true">Textura</button>
+                    <button type="button" data-valor="arcilla" aria-pressed="false">Sin color</button>
+                </div>
+                <div class="segmento" data-control="luz" role="group" aria-label="Iluminación">
+                    <button type="button" data-valor="dia" aria-pressed="true">Día</button>
+                    <button type="button" data-valor="atardecer" aria-pressed="false">Atardecer</button>
+                    <button type="button" data-valor="estudio" aria-pressed="false">Estudio</button>
+                </div>
+            </div>
+
+            <div class="visor__barra visor__barra--abajo">
+                <div class="segmento" data-control="modo" role="group" aria-label="Animación">
+                    <button type="button" data-valor="reposo" aria-pressed="true">Reposo</button>
+                    <button type="button" data-valor="caminar" aria-pressed="false">Caminar</button>
+                </div>
+                <div class="visor__iconos">
+                    <button type="button" id="girar" aria-pressed="true" title="Giro automático" aria-label="Giro automático">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+                    </button>
+                    <button type="button" id="encuadrar" title="Centrar cámara" aria-label="Centrar cámara">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+                    </button>
+                    <button type="button" id="captura" title="Descargar imagen" aria-label="Descargar imagen">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                    </button>
+                    <button type="button" id="completa" title="Pantalla completa" aria-label="Pantalla completa">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+                    </button>
+                </div>
+            </div>
+            <p class="visor__ayuda">Arrastra para girar · rueda o pellizco para acercar · clic derecho o dos dedos para mover</p>
+        </div>
+
+        <aside class="ficha3d" id="ficha-3d" aria-live="polite"></aside>
+    </div>
+</section>
