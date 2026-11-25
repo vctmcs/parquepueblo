@@ -22,7 +22,7 @@
         }
     }
     </script>
-    <script>window.BASE_URL = "{{base}}";</script>
+    <script>window.BASE_URL = "{{base}}"; window.CSRF = "{{csrf}}";</script>
 </head>
 <body>
     <a class="saltar" href="#principal">Saltar al contenido</a>
@@ -46,6 +46,8 @@
                 <a class="{{activo_mapa}}" href="{{base}}/mapa">Mapa</a>
                 <a class="{{activo_animales}}" href="{{base}}/animales">Animales</a>
                 <a class="{{activo_3d}}" href="{{base}}/animales-3d">Animales 3D</a>
+                <a class="{{activo_curiosidades}}" href="{{base}}/curiosidades">Curiosidades</a>
+                <a class="menu__donar {{activo_donar}}" href="{{base}}/donar">Donar</a>
             </nav>
         </div>
     </header>

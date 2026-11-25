@@ -37,7 +37,7 @@ window.Ficha = {
                 <div><dt>Longevidad</dt><dd>${esc(e.longevidad)}</dd></div>
             </dl>
             <div class="ficha__curiosidad"><strong>Dato curioso</strong>${esc(e.curiosidad)}</div>
-            <div class="ficha__acciones">${botonMapa}${boton3d}</div>
+            <div class="ficha__acciones">${botonMapa}${boton3d}${e.cientifico === 'Varias especies' ? '' : `<a class="boton boton--chico boton--claro" href="${P.url('/donar')}?animal=${encodeURIComponent(slug)}">Apadrinar</a>`}</div>
         </article>`;
     }
 };

@@ -221,3 +221,5 @@
     .visor__ayuda { display: none; }
     .ficha3d__datos { grid-template-columns: 1fr; }
 }
+
+.ficha3d__acciones { display: flex; flex-wrap: wrap; gap: .5rem; }

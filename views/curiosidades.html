@@ -1,0 +1,33 @@
+<section class="contenedor encabezado">
+    <span class="etiqueta">Curiosidades</span>
+    <h1>¿Sabías que...?</h1>
+    <p>Datos curiosos de los animales del parque. Voltea las tarjetas o pon a prueba lo que sabes con la trivia.</p>
+</section>
+
+<section class="contenedor curiosidades">
+    <div class="pestanas" role="tablist" aria-label="Modo">
+        <button role="tab" id="tab-tarjetas" aria-controls="panel-tarjetas" aria-selected="true">Tarjetas</button>
+        <button role="tab" id="tab-trivia" aria-controls="panel-trivia" aria-selected="false" tabindex="-1">Trivia</button>
+    </div>
+
+    <!-- Tarjetas -->
+    <div role="tabpanel" id="panel-tarjetas" aria-labelledby="tab-tarjetas">
+        <div class="curiosidades__barra">
+            <div class="chips" id="chips"></div>
+            <button class="boton boton--claro boton--chico" type="button" id="azar">Una al azar</button>
+        </div>
+        <div class="tarjetas" id="tarjetas">
+            <span class="cargando" aria-label="Cargando"></span>
+        </div>
+    </div>
+
+    <!-- Trivia -->
+    <div role="tabpanel" id="panel-trivia" aria-labelledby="tab-trivia" hidden>
+        <div class="trivia" id="trivia"></div>
+    </div>
+</section>
+
+<dialog class="ficha-modal" id="ficha">
+    <div class="ficha-modal__cuerpo" id="ficha-cuerpo"></div>
+    <form method="dialog"><button class="ficha-modal__cerrar" aria-label="Cerrar">&times;</button></form>
+</dialog>

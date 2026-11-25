@@ -133,7 +133,10 @@ function pintarFicha(slug, m) {
             <div><dt>Longevidad</dt><dd>${P.escapar(e.longevidad)}</dd></div>
         </dl>
         <div class="ficha3d__curiosidad"><strong>Dato curioso</strong>${P.escapar(e.curiosidad)}</div>
-        <a class="boton boton--chico" href="${P.url('/mapa')}?animal=${encodeURIComponent(slug)}" data-mapa>Ver dónde está en el mapa</a>
+        <div class="ficha3d__acciones">
+            <a class="boton boton--chico" href="${P.url('/mapa')}?animal=${encodeURIComponent(slug)}" data-mapa>Ver en el mapa</a>
+            <a class="boton boton--chico boton--naranja" href="${P.url('/donar')}?animal=${encodeURIComponent(slug)}">Apadrinar</a>
+        </div>
         ${m.credito
             ? `<p class="ficha3d__nota">Modelo 3D: <a href="${P.escapar(m.credito.url)}" target="_blank" rel="noopener">${P.escapar(m.credito.titulo)}</a> de ${P.escapar(m.credito.autor)} (Sketchfab), licencia ${P.escapar(m.credito.licencia)}.</p>`
             : '<p class="ficha3d__nota">Modelo y pelaje generados por código con Three.js.</p>'}

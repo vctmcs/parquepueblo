@@ -123,6 +123,10 @@ button { font: inherit; }
 }
 .menu a:hover { background: var(--arena); color: var(--tinta); }
 .menu a.activo { background: var(--bosque); color: var(--blanco); }
+.menu a.menu__donar { background: var(--naranja); color: var(--blanco); margin-left: .3rem; }
+.menu a.menu__donar:hover { background: #c4701d; color: var(--blanco); }
+.menu a.menu__donar.activo { background: var(--tinta); }
+@media (max-width: 1020px) and (min-width: 761px) { .menu a { padding: .5rem .65rem; font-size: .92rem; } }
 
 .menu-boton {
     display: none;
@@ -141,6 +145,7 @@ button { font: inherit; }
 
 @media (max-width: 760px) {
     .menu-boton { display: flex; }
+    .menu a.menu__donar { margin: .3rem 0 0; text-align: center; }
     .menu {
         position: absolute;
         top: var(--alto-cabecera);
@@ -300,6 +305,18 @@ button { font: inherit; }
     .hero__arte { max-width: 420px; margin-inline: auto; }
     .secciones { grid-template-columns: 1fr; }
 }
+
+.apoyo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 3rem 0 4rem;
+}
+.apoyo h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); max-width: 26ch; }
+.apoyo p { color: var(--tinta-suave); margin: 0; }
+.apoyo__acciones { display: flex; flex-wrap: wrap; gap: .6rem; }
 
 /* ---------- 404 ---------- */
 
