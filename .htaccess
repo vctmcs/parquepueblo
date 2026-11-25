@@ -5,7 +5,7 @@ DirectoryIndex index.php
     RewriteEngine On
 
     # No exponer el código ni los datos
-    RewriteRule ^(app|views)(/|$) - [F,L]
+    RewriteRule ^(app|views|storage)(/|$) - [F,L]
 
     # Archivos y carpetas reales se sirven directo
     RewriteCond %{REQUEST_FILENAME} -f [OR]

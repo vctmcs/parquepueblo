@@ -21,9 +21,16 @@ if (PHP_SAPI === 'cli-server') {
 require __DIR__ . '/app/config.php';
 require __DIR__ . '/app/core/View.php';
 require __DIR__ . '/app/core/Router.php';
+require __DIR__ . '/app/core/Sesion.php';
 require __DIR__ . '/app/core/Repositorio.php';
+require __DIR__ . '/app/core/BaseDatos.php';
+require __DIR__ . '/app/core/Donaciones.php';
 require __DIR__ . '/app/controllers/PaginaController.php';
 require __DIR__ . '/app/controllers/ApiController.php';
+require __DIR__ . '/app/controllers/DonacionController.php';
+require __DIR__ . '/app/controllers/AdminController.php';
+
+Sesion::iniciar();
 
 $router = new Router();
 
@@ -32,6 +39,23 @@ $router->get('/',            [PaginaController::class, 'inicio']);
 $router->get('/mapa',        [PaginaController::class, 'mapa']);
 $router->get('/animales',    [PaginaController::class, 'animales']);
 $router->get('/animales-3d', [PaginaController::class, 'modelos3d']);
+$router->get('/curiosidades', [PaginaController::class, 'curiosidades']);
+
+// Donaciones
+$router->get('/donar',              [DonacionController::class, 'pagina']);
+$router->get('/donar/gracias',      [DonacionController::class, 'gracias']);
+$router->get('/api/campanas',       [DonacionController::class, 'campanas']);
+$router->get('/api/donadores',      [DonacionController::class, 'donadores']);
+$router->get('/api/recibo',         [DonacionController::class, 'recibo']);
+$router->post('/api/donaciones',    [DonacionController::class, 'registrar']);
+
+// Administración
+$router->get('/admin',              [AdminController::class, 'panel']);
+$router->get('/admin/entrar',       [AdminController::class, 'formulario']);
+$router->post('/admin/entrar',      [AdminController::class, 'entrar']);
+$router->post('/admin/salir',       [AdminController::class, 'salir']);
+$router->get('/admin/exportar', [AdminController::class, 'csv']);
+$router->get('/api/admin/donaciones', [AdminController::class, 'datos']);
 
 // API JSON (la consume el JavaScript del sitio)
 $router->get('/api/especies', [ApiController::class, 'especies']);

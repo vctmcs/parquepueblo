@@ -15,6 +15,7 @@ final class View
     public static function render(string $vista, array $datos = [], string $layout = 'layout'): void
     {
         $datos += [
+            'csrf'      => Sesion::csrf(),
             'base'      => BASE_URL,
             'sitio'     => NOMBRE_SITIO,
             'subtitulo' => SUBTITULO_SITIO,
@@ -28,11 +29,11 @@ final class View
         echo $pagina;
     }
 
-    public static function json(mixed $datos, int $estado = 200): void
+    public static function json(mixed $datos, int $estado = 200, bool $cache = true): void
     {
         http_response_code($estado);
         header('Content-Type: application/json; charset=utf-8');
-        header('Cache-Control: public, max-age=300');
+        header($cache ? 'Cache-Control: public, max-age=300' : 'Cache-Control: no-store');
         echo json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 

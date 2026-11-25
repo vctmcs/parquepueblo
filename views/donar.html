@@ -1,0 +1,101 @@
+<section class="contenedor encabezado">
+    <span class="etiqueta">Donaciones</span>
+    <h1>Ayuda a cuidar a los animales</h1>
+    <p>Elige a qué quieres destinar tu donativo: alimento, enriquecimiento, atención veterinaria o apadrinar a una especie.</p>
+    <p class="demo-aviso" role="note">
+        <strong>Modo demostración.</strong> Este sitio no es oficial y no realiza ningún cobro: el donativo se registra para mostrar el flujo completo. Para donar de verdad, acude a los canales oficiales del parque.
+    </p>
+</section>
+
+<section class="contenedor donar">
+    <form class="donar__form" id="form-donar" novalidate>
+        <!-- Paso 1: campaña -->
+        <fieldset class="paso">
+            <legend><span class="paso__num">1</span> ¿A qué quieres apoyar?</legend>
+            <div class="campanas" id="campanas" role="radiogroup" aria-label="Campañas">
+                <span class="cargando" aria-label="Cargando"></span>
+            </div>
+            <p class="campo__error" data-error="campana"></p>
+
+            <div class="campo campo--especie" id="campo-especie" hidden>
+                <label for="especie">Animal que quieres apadrinar</label>
+                <select id="especie" name="especie">
+                    <option value="">Elige un animal</option>
+                </select>
+                <p class="campo__error" data-error="especie"></p>
+            </div>
+        </fieldset>
+
+        <!-- Paso 2: monto -->
+        <fieldset class="paso">
+            <legend><span class="paso__num">2</span> Monto</legend>
+            <div class="montos" id="montos">
+                <button type="button" class="monto" data-monto="50">$50</button>
+                <button type="button" class="monto" data-monto="100" aria-pressed="true">$100</button>
+                <button type="button" class="monto" data-monto="200">$200</button>
+                <button type="button" class="monto" data-monto="500">$500</button>
+                <label class="monto monto--otro">
+                    <span>Otro $</span>
+                    <input type="number" id="monto-otro" inputmode="numeric" min="{{minimo}}" max="{{maximo}}" step="1" placeholder="0" aria-label="Otro monto en pesos">
+                </label>
+            </div>
+            <p class="campo__ayuda">Entre ${{minimo_txt}} y ${{maximo_txt}} MXN.</p>
+            <p class="campo__error" data-error="monto"></p>
+        </fieldset>
+
+        <!-- Paso 3: datos -->
+        <fieldset class="paso">
+            <legend><span class="paso__num">3</span> Tus datos</legend>
+            <div class="campos">
+                <div class="campo">
+                    <label for="nombre">Nombre</label>
+                    <input id="nombre" name="nombre" type="text" autocomplete="name" maxlength="80" required>
+                    <p class="campo__error" data-error="nombre"></p>
+                </div>
+                <div class="campo">
+                    <label for="correo">Correo</label>
+                    <input id="correo" name="correo" type="email" autocomplete="email" maxlength="120" required>
+                    <p class="campo__error" data-error="correo"></p>
+                </div>
+            </div>
+            <div class="campo">
+                <label for="mensaje">Mensaje para el muro <small>(opcional)</small></label>
+                <textarea id="mensaje" name="mensaje" rows="3" maxlength="280" placeholder="¡Mucho ánimo a los cuidadores!"></textarea>
+                <p class="campo__ayuda"><span id="contador">0</span>/280</p>
+                <p class="campo__error" data-error="mensaje"></p>
+            </div>
+            <label class="casilla">
+                <input type="checkbox" id="anonimo" name="anonimo">
+                <span>Mostrarme como <strong>donante anónimo</strong> en el muro</span>
+            </label>
+
+            <!-- Trampa para bots -->
+            <div class="trampa" aria-hidden="true">
+                <label>Sitio web <input type="text" name="sitio_web" tabindex="-1" autocomplete="off"></label>
+            </div>
+        </fieldset>
+
+        <p class="form__error" id="error-general" role="alert"></p>
+    </form>
+
+    <aside class="resumen" aria-live="polite">
+        <h2>Tu donativo</h2>
+        <dl>
+            <div><dt>Destino</dt><dd id="r-campana">—</dd></div>
+            <div id="r-especie-fila" hidden><dt>Animal</dt><dd id="r-especie">—</dd></div>
+            <div><dt>Monto</dt><dd id="r-monto">$100</dd></div>
+        </dl>
+        <p class="resumen__impacto" id="r-impacto"></p>
+        <button class="boton boton--naranja resumen__boton" type="submit" form="form-donar" id="enviar">
+            Donar <span id="r-boton">$100</span>
+        </button>
+        <p class="resumen__nota">Demostración: no se pide ni se guarda ningún dato de pago.</p>
+    </aside>
+</section>
+
+<section class="contenedor muro">
+    <h2>Muro de donantes</h2>
+    <div class="muro__lista" id="muro">
+        <span class="cargando" aria-label="Cargando"></span>
+    </div>
+</section>

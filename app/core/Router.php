@@ -16,6 +16,11 @@ final class Router
         $this->rutas['GET'][$this->normalizar($ruta)] = $accion;
     }
 
+    public function post(string $ruta, callable|array $accion): void
+    {
+        $this->rutas['POST'][$this->normalizar($ruta)] = $accion;
+    }
+
     public function despachar(): void
     {
         $metodo = $_SERVER['REQUEST_METHOD'] ?? 'GET';

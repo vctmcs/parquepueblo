@@ -28,6 +28,11 @@ final class PaginaController
         View::render('modelos3d', $this->comunes('3d', 'Animales en 3D', ['visor3d.css'], [], ['visor3d/app.js']));
     }
 
+    public function curiosidades(): void
+    {
+        View::render('curiosidades', $this->comunes('curiosidades', 'Curiosidades', ['catalogo.css', 'curiosidades.css'], ['ficha.js', 'curiosidades.js']));
+    }
+
     public function noEncontrada(): void
     {
         View::render('404', $this->comunes('', 'Página no encontrada'));
@@ -36,6 +41,11 @@ final class PaginaController
     /**
      * Variables que usa el layout: título, enlace activo y hojas/scripts extra.
      */
+    public function comunesPublico(string $activo, string $titulo, array $css = [], array $js = []): array
+    {
+        return $this->comunes($activo, $titulo, $css, $js);
+    }
+
     private function comunes(string $activo, string $titulo, array $css = [], array $js = [], array $modulos = []): array
     {
         $b = BASE_URL;
@@ -60,6 +70,8 @@ final class PaginaController
             'activo_mapa'     => $activo === 'mapa' ? 'activo' : '',
             'activo_animales' => $activo === 'animales' ? 'activo' : '',
             'activo_3d'       => $activo === '3d' ? 'activo' : '',
+            'activo_curiosidades' => $activo === 'curiosidades' ? 'activo' : '',
+            'activo_donar'    => $activo === 'donar' ? 'activo' : '',
         ];
     }
 }

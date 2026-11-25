@@ -10,3 +10,8 @@ desktop.ini
 # Varios
 *.log
 /tmp/
+
+# Base de datos local y configuración privada
+/storage/*.sqlite
+/storage/*.sqlite-*
+/app/config.local.php
