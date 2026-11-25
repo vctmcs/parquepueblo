@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{titulo}} · {{sitio}} ({{subtitulo}})</title>
+    <meta name="description" content="Guía no oficial del Parque del Pueblo: mapa interactivo de recintos, fichas de animales y modelos en 3D.">
+    <link rel="icon" href="{{base}}/public/img/icono.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{base}}/public/css/estilos.css">
+    {{{css_extra}}}
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "{{base}}/public/vendor/three/three.module.js",
+            "three/addons/": "{{base}}/public/vendor/three/addons/"
+        }
+    }
+    </script>
+    <script>window.BASE_URL = "{{base}}";</script>
+</head>
+<body>
+    <a class="saltar" href="#principal">Saltar al contenido</a>
+
+    <header class="cabecera">
+        <div class="contenedor cabecera__fila">
+            <a class="marca" href="{{base}}/">
+                <img src="{{base}}/public/img/icono.svg" alt="" width="34" height="34">
+                <span class="marca__texto">
+                    <strong>{{sitio}}</strong>
+                    <small>{{subtitulo}}</small>
+                </span>
+            </a>
+
+            <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú">
+                <span></span><span></span><span></span>
+            </button>
+
+            <nav id="menu" class="menu" aria-label="Principal">
+                <a class="{{activo_inicio}}" href="{{base}}/">Inicio</a>
+                <a class="{{activo_mapa}}" href="{{base}}/mapa">Mapa</a>
+                <a class="{{activo_animales}}" href="{{base}}/animales">Animales</a>
+                <a class="{{activo_3d}}" href="{{base}}/animales-3d">Animales 3D</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="principal">
+        {{{contenido}}}
+    </main>
+
+    <footer class="pie">
+        <div class="contenedor pie__fila">
+            <p><strong>{{sitio}}</strong> · {{subtitulo}}</p>
+            <p class="pie__aviso">Proyecto independiente con fines educativos y de portafolio. No está afiliado al parque ni a su administración; para horarios, tarifas y avisos consulta los canales oficiales.</p>
+            <p class="pie__copy">© {{anio}} Víctor Hugo Estrada Macías</p>
+        </div>
+    </footer>
+
+    <script src="{{base}}/public/js/main.js" defer></script>
+    {{{js_extra}}}
+</body>
+</html>

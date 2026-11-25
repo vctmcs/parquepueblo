@@ -1,0 +1,23 @@
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # No exponer el código ni los datos
+    RewriteRule ^(app|views)(/|$) - [F,L]
+
+    # Archivos y carpetas reales se sirven directo
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Todo lo demás pasa por index.php
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType model/gltf-binary .glb
+    AddType model/gltf+json .gltf
+    AddType text/javascript .js .mjs
+</IfModule>

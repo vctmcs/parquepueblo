@@ -1,0 +1,73 @@
+<section class="hero">
+    <div class="contenedor hero__grid">
+        <div>
+            <span class="etiqueta">Guía no oficial</span>
+            <h1>Recorre el <em>Parque del Pueblo</em> antes de llegar</h1>
+            <p class="hero__lead">Ubica cada recinto en el mapa interactivo, conoce a los animales que viven ahí y mira de cerca a los grandes felinos y a la jirafa en modelos 3D con su pelaje y colores.</p>
+            <div class="hero__acciones">
+                <a class="boton" href="{{base}}/mapa">Abrir el mapa</a>
+                <a class="boton boton--claro" href="{{base}}/animales-3d">Ver animales en 3D</a>
+            </div>
+            <div class="cifras">
+                <div class="cifra"><strong>{{total_recintos}}</strong><span>recintos</span></div>
+                <div class="cifra"><strong>{{total_especies}}</strong><span>especies</span></div>
+                <div class="cifra"><strong>{{total_3d}}</strong><span>modelos 3D</span></div>
+            </div>
+        </div>
+
+        <div class="hero__arte" aria-hidden="true">
+            <svg viewBox="0 0 200 200">
+                <path d="M30 150 C 60 120, 70 160, 110 130 S 170 110, 175 70" fill="none" stroke="#f6f1e7" stroke-width="10" stroke-linecap="round" stroke-dasharray="1 18"/>
+                <g transform="translate(40 52)">
+                    <circle r="20" fill="#1f3d2b"/>
+                    <text y="7" text-anchor="middle" font-family="Fraunces" font-weight="700" font-size="20" fill="#f6f1e7">18</text>
+                </g>
+                <g transform="translate(150 140)">
+                    <circle r="20" fill="#d9822b"/>
+                    <text y="7" text-anchor="middle" font-family="Fraunces" font-weight="700" font-size="20" fill="#fff">25</text>
+                </g>
+                <g transform="translate(118 58)">
+                    <circle r="14" fill="#fffdf8"/>
+                    <text y="5" text-anchor="middle" font-family="Fraunces" font-weight="700" font-size="14" fill="#1f3d2b">11</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<section class="contenedor secciones">
+    <a class="tarjeta" href="{{base}}/mapa">
+        <div class="tarjeta__icono">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3d2b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>
+        </div>
+        <h3>Mapa interactivo</h3>
+        <p>Toca cualquier recinto o servicio para ver qué hay, filtra por tipo de animal y busca por nombre.</p>
+    </a>
+    <a class="tarjeta" href="{{base}}/animales">
+        <div class="tarjeta__icono">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3d2b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg>
+        </div>
+        <h3>Fichas de animales</h3>
+        <p>Nombre científico, dieta, de dónde vienen, su estado de conservación y un dato curioso de cada especie.</p>
+    </a>
+    <a class="tarjeta" href="{{base}}/animales-3d">
+        <div class="tarjeta__icono">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1f3d2b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg>
+        </div>
+        <h3>Animales en 3D</h3>
+        <p>León, tigre, jaguar, leopardo, puma y jirafa con su pelaje; gíralos, acércate y compáralos.</p>
+    </a>
+</section>
+
+<section class="franja">
+    <div class="contenedor franja__grid">
+        <div>
+            <h2>Hecho para planear la visita</h2>
+            <p>El mapa sigue la distribución del plano del parque: el río y el lago con la isla al centro, la explanada del kiosko, los felinos a la derecha y la entrada principal al sur.</p>
+        </div>
+        <div>
+            <p>Los datos de cada especie son de divulgación general. Si algo cambió en el parque (un recinto nuevo o un animal que ya no está), se actualiza en un solo archivo.</p>
+            <a class="boton boton--naranja" href="{{base}}/mapa">Empezar recorrido</a>
+        </div>
+    </div>
+</section>
